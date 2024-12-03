@@ -10,3 +10,7 @@ body {
 .text-roboto {
   font-family: "Roboto", sans-serif;
 }
+
+.borderR {
+  border-right: 1px solid black !important;
+}
