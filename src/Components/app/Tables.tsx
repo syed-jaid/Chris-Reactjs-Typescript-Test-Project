@@ -1,4 +1,3 @@
-import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,12 +6,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Flex } from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.common.black,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -21,41 +20,22 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: theme.palette.common.white,
   },
-  // hide last border
+
   "&:last-child td, &:last-child th": {
     border: 0,
   },
 }));
 
-function createData(
-  name: string,
-  QS: number,
-  CTR: number,
-  CVR: number,
-  Leads: number,
-  CPA: number,
-  Costs: number,
-  Revenue: number,
-  ROAS: number
-) {
-  return { name, QS, CTR, CVR, Leads, CPA, Costs, Revenue, ROAS };
-}
-
-const rows = [
-  createData("Account A 123-456-7890", 3.4, 7.8, 2.9, 36, 8, 1345, 56607, 14.1),
-  createData("Account b 123-443-7890", 8.4, 7.8, 2.9, 36, 8, 1345, 56607, 14.1),
-  createData("Account A 123-456-3450", 5.4, 7.8, 2.9, 36, 8, 1345, 56607, 14.1),
-];
-
 export default function Tables({
   setIsDrawerOpen,
   tabRowIndex,
   setTabRowIndex,
+  rows,
 }: any) {
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} elevation={0}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
@@ -71,10 +51,10 @@ export default function Tables({
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {rows.map((row: any, index: any) => (
             <StyledTableRow key={row.name}>
               <StyledTableCell component="th" scope="row">
-                <Flex gap="1" align="center">
+                <Flex gap="2" align="center">
                   {index === tabRowIndex ? (
                     <img
                       onClick={() => {

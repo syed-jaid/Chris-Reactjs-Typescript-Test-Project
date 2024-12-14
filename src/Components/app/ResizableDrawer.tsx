@@ -1,16 +1,21 @@
+import { TableBody } from "@mui/material";
+import { Box, Flex, Text } from "@radix-ui/themes";
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import DrawerTable from "./DrawerTable";
 
 // Define props interface
 interface ResizableDrawerProps {
   isDrawerOpen: boolean;
   setIsDrawerOpen: Dispatch<SetStateAction<boolean>>;
+  tabRowData: any;
 }
 
 const ResizableDrawer: React.FC<ResizableDrawerProps> = ({
   isDrawerOpen,
   setIsDrawerOpen,
+  tabRowData,
 }) => {
-  const [drawerWidth, setDrawerWidth] = useState(window.innerWidth * 0.4); // Default width: 40% of window
+  const [drawerWidth, setDrawerWidth] = useState(window.innerWidth * 0.5); // Default width: 50% of window
   const [isDragging, setIsDragging] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -62,22 +67,16 @@ const ResizableDrawer: React.FC<ResizableDrawerProps> = ({
         } transition-transform duration-300`}
         style={{ width: drawerWidth }}
       >
-        {/* Close Button */}
-        <button
-          onClick={() => setIsDrawerOpen(false)}
-          className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-        >
-          Close
-        </button>
-
         {/* Drawer Content */}
-        <div className="p-6">
-          <h2 className="text-lg font-semibold">Resizable Drawer</h2>
-          <p className="mt-4 text-sm">
-            Resize the drawer by dragging the left edge.
-          </p>
+        <div className="p-6 mt-8">
+          <Text className="text-[21px] text-roboto">
+            <span className="text-[#29292980]">Ad Group </span>
+            <span className="text-[#292929] font-bold">{tabRowData?.name}</span>
+          </Text>
+          <div className="mt-5">
+            <DrawerTable rows={tabRowData} />
+          </div>
         </div>
-
         {/* Drag Handle */}
         <div
           onMouseDown={handleMouseDown}

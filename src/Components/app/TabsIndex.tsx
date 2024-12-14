@@ -1,5 +1,6 @@
-import React, { useState, FC } from "react";
-import { Box, Flex } from "@radix-ui/themes";
+// TabsIndex.tsx
+import React, { useState, FC, useEffect } from "react";
+import { Box, Flex, Text } from "@radix-ui/themes";
 import Tables from "./Tables";
 import ResizableDrawer from "./ResizableDrawer";
 
@@ -63,20 +64,68 @@ const Tab: FC<TabProps> = ({
 );
 
 const TabsIndex: FC = () => {
-  const [activeTab, setActiveTab] = useState("Ad Groups");
-  const [tabs, setTabs] = useState([
+  const [activeTab, setActiveTab] = useState<string>("Ad Groups");
+  const [tabs, setTabs] = useState<{ label: string; hasDropdown?: boolean }[]>([
     { label: "Ad Groups" },
     { label: "Leads" },
     { label: "Settings" },
     { label: "+", hasDropdown: true },
   ]);
-  const [dropdownItems, setDropdownItems] = useState([
+  const [dropdownItems, setDropdownItems] = useState<string[]>([
     "Item 1",
     "Item 2",
     "Item 3",
   ]);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [tabRowIndex, setTabRowIndex] = useState(0);
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [tabRowIndex, setTabRowIndex] = useState<number | null>(null);
+  const [tabRowData, setTabRowData] = useState<object | null>(null);
+
+  const rows: {
+    name: string;
+    QS: number;
+    CTR: number;
+    CVR: number;
+    Leads: number;
+    CPA: number;
+    Costs: number;
+    Revenue: number;
+    ROAS: number;
+  }[] = [
+    {
+      name: "Account A 123-456-7890",
+      QS: 3.4,
+      CTR: 6.1,
+      CVR: 2.34,
+      Leads: 36,
+      CPA: 8,
+      Costs: 1323445,
+      Revenue: 56607,
+      ROAS: 14.1,
+    },
+    {
+      name: "Account B 123-443-7890",
+      QS: 8.4,
+      CTR: 7.8,
+      CVR: 3.9,
+      Leads: 36,
+      CPA: 3,
+      Costs: 1345,
+      Revenue: 56607,
+      ROAS: 14.1,
+    },
+    {
+      name: "Account C 123-456-3450",
+      QS: 5.4,
+      CTR: 4.1,
+      CVR: 3.67,
+      Leads: 83,
+      CPA: 8,
+      Costs: 23445,
+      Revenue: 243607,
+      ROAS: 156.1,
+    },
+  ];
 
   const handleDropdownClick = (item: string) => {
     setTabs((prevTabs) => [
@@ -86,6 +135,13 @@ const TabsIndex: FC = () => {
     ]);
     setDropdownItems((prevItems) => prevItems.filter((i) => i !== item));
   };
+
+  useEffect(() => {
+    if (tabRowIndex != null && rows[tabRowIndex]) {
+      const data = rows[tabRowIndex];
+      setTabRowData(data);
+    }
+  }, [tabRowIndex]);
 
   return (
     <Box className="border border-[#9797974E] rounded-[6px] mt-4">
@@ -103,13 +159,37 @@ const TabsIndex: FC = () => {
         ))}
       </Flex>
       <div className="p-4 w-full min-h-[200px] flex justify-center items-center">
-        <Tables {...{ setIsDrawerOpen, tabRowIndex, setTabRowIndex }} />
+        {activeTab === "Ad Groups" ? (
+          <Tables
+            {...{
+              setIsDrawerOpen,
+              tabRowIndex,
+              setTabRowIndex,
+              rows,
+            }}
+          />
+        ) : activeTab === "+" ? (
+          <Text align="center">
+            <span style={{ fontWeight: "600" }}>Add Items</span>
+            <br />
+            {dropdownItems.length === 0
+              ? "No items available"
+              : "Select items from the dropdown to add"}
+            .
+          </Text>
+        ) : (
+          <Text align="center">
+            <span style={{ fontWeight: "600" }}>{activeTab}</span>
+            <br />
+            Coming Soon...
+          </Text>
+        )}
       </div>
 
-      {/* Right-side Drawer */}
       <ResizableDrawer
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
+        tabRowData={tabRowData}
       />
     </Box>
   );
