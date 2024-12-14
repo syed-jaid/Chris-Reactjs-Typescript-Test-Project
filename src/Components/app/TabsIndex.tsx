@@ -1,5 +1,7 @@
 import React, { useState, FC } from "react";
 import { Box, Flex } from "@radix-ui/themes";
+import Tables from "./Tables";
+import ResizableDrawer from "./ResizableDrawer";
 
 interface TabProps {
   label: string;
@@ -74,6 +76,7 @@ const TabsIndex: FC = () => {
     "Item 3",
   ]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [tabRowIndex, setTabRowIndex] = useState(0);
 
   const handleDropdownClick = (item: string) => {
     setTabs((prevTabs) => [
@@ -100,34 +103,14 @@ const TabsIndex: FC = () => {
         ))}
       </Flex>
       <div className="p-4 w-full min-h-[200px] flex justify-center items-center">
-        <p className="text-center font-medium">
-          {activeTab === "+" ? "Coming soon..." : activeTab}
-        </p>
-        <button
-          onClick={() => setIsDrawerOpen(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-        >
-          Click Now
-        </button>
+        <Tables {...{ setIsDrawerOpen, tabRowIndex, setTabRowIndex }} />
       </div>
 
       {/* Right-side Drawer */}
-      <div
-        className={`fixed top-0 right-0 h-full w-[40%] bg-white shadow-lg transform ${
-          isDrawerOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300`}
-      >
-        <button
-          onClick={() => setIsDrawerOpen(false)}
-          className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
-        >
-          Close
-        </button>
-        <div className="p-6">
-          <h2 className="text-lg font-semibold">Drawer Content</h2>
-          <p className="mt-4 text-sm">This is your right-side drawer.</p>
-        </div>
-      </div>
+      <ResizableDrawer
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+      />
     </Box>
   );
 };
