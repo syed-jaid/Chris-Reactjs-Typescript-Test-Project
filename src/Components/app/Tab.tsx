@@ -8,7 +8,8 @@ interface TabProps {
 }
 
 const Tab: FC<TabProps> = ({ label, isActive, showBorder, onClick }) => {
-  const topBorderWidth = label === "Ad Groups" ? "w-[93%]" : "w-full";
+  const topBorderWidth =
+    label === "Ad Groups" || label === "Keywords" ? "w-[93%]" : "w-full";
 
   return (
     <div
