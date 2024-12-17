@@ -109,7 +109,7 @@ const ResizableDrawer: React.FC<ResizableDrawerProps> = ({
             setIsDrawerOpen(false);
             setTabRowIndex(null);
           }}
-          className="cursor-pointer text-gray-400"
+          className="drawer-close-btn"
         />
 
         {/* Drawer Content */}
