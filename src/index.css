@@ -14,3 +14,25 @@ body {
 .borderR {
   border-right: 1px solid black !important;
 }
+
+.drawer-close-btn {
+  margin-top: 20px;
+  margin-left: 20px;
+  padding: 3px;
+  font-size: 22px;
+  border-radius: 4px;
+}
+
+.drawer-close-btn:hover {
+  margin-top: 20px;
+  margin-left: 20px;
+  background: #dcdcdc;
+  padding: 3px;
+  font-size: 22px;
+  border-radius: 4px;
+}
+
+.drawer-close-btn:active {
+  background: #ebebeb;
+  transform: scale(0.9);
+}

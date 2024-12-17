@@ -1,55 +1,75 @@
-import { TableBody } from "@mui/material";
-import { Box, Flex, Text } from "@radix-ui/themes";
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
-import DrawerTable from "./DrawerTable";
+import { Flex, Text } from "@radix-ui/themes";
+import { FaAnglesRight } from "react-icons/fa6";
+import Tab from "./Tab";
+import TabPlus from "./TabPlus";
 
-// Define props interface
 interface ResizableDrawerProps {
   isDrawerOpen: boolean;
   setIsDrawerOpen: Dispatch<SetStateAction<boolean>>;
-  tabRowData: any;
+  setTabRowIndex: Dispatch<SetStateAction<any>>;
+  tabRowData: { name: string } | null;
 }
+
+const MIN_DRAWER_WIDTH_RATIO = 0.3; // 30% of window width
+const MAX_DRAWER_WIDTH_RATIO = 0.8; // 80% of window width
+const INITIAL_DRAWER_WIDTH_RATIO = 0.5; // 50% of window width
 
 const ResizableDrawer: React.FC<ResizableDrawerProps> = ({
   isDrawerOpen,
   setIsDrawerOpen,
+  setTabRowIndex,
   tabRowData,
 }) => {
-  const [drawerWidth, setDrawerWidth] = useState(window.innerWidth * 0.5); // Default width: 50% of window
+  const [drawerWidth, setDrawerWidth] = useState(
+    window.innerWidth * INITIAL_DRAWER_WIDTH_RATIO
+  );
   const [isDragging, setIsDragging] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [activeTab, setActiveTab] = useState<string>("Keywords");
+  const [tabs, setTabs] = useState<Array<{ label: string; isActive: boolean }>>(
+    [
+      { label: "Keywords", isActive: true },
+      { label: "Leads", isActive: false },
+      { label: "Settings", isActive: false },
+    ]
+  );
+  const [dropdownItems, setDropdownItems] = useState<string[]>([
+    "Item 1",
+    "Item 2",
+    "Item 3",
+  ]);
 
-  // Update the window width on resize
+  // Handle window resize
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
+    const handleResize = () =>
+      setDrawerWidth(window.innerWidth * INITIAL_DRAWER_WIDTH_RATIO);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleMouseDown = () => setIsDragging(true);
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging) {
-      const newWidth = windowWidth - e.clientX; // Calculate the new drawer width
-      const minWidth = windowWidth * 0.25; // 25% of window width
-      const maxWidth = windowWidth * 0.75; // 75% of window width
-
-      // Clamp the width within the allowed range
-      if (newWidth >= minWidth && newWidth <= maxWidth) {
-        setDrawerWidth(newWidth);
-      }
-    }
-  };
-
-  const handleMouseUp = () => setIsDragging(false);
-
+  // Handle dragging logic
   useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        const newWidth = window.innerWidth - e.clientX;
+        const minWidth = window.innerWidth * MIN_DRAWER_WIDTH_RATIO;
+        const maxWidth = window.innerWidth * MAX_DRAWER_WIDTH_RATIO;
+
+        if (newWidth >= minWidth && newWidth <= maxWidth) {
+          setDrawerWidth(newWidth);
+        }
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.body.style.userSelect = "auto";
+    };
+
     if (isDragging) {
+      document.body.style.userSelect = "none";
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
-    } else {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
     }
 
     return () => {
@@ -58,28 +78,82 @@ const ResizableDrawer: React.FC<ResizableDrawerProps> = ({
     };
   }, [isDragging]);
 
+  // Handle active tab change
+  const setActiveTabByIndex = (index: number) => {
+    setTabs((prevTabs) =>
+      prevTabs.map((tab, i) => ({ ...tab, isActive: i === index }))
+    );
+    setActiveTab(tabs[index].label);
+  };
+
+  const handleDropdownClick = (item: string) => {
+    setTabs((prevTabs) => [
+      ...prevTabs.map((tab) => ({ ...tab, isActive: false })),
+      { label: item, isActive: true },
+    ]);
+    setDropdownItems((items) => items.filter((i) => i !== item));
+    setActiveTab(item);
+  };
+
   return (
     <div>
-      {/* Right-side Drawer */}
       <div
         className={`fixed top-0 right-0 h-full bg-white shadow-lg transform ${
           isDrawerOpen ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300`}
         style={{ width: drawerWidth }}
       >
+        {/* Close Button */}
+        <FaAnglesRight
+          onClick={() => {
+            setIsDrawerOpen(false);
+            setTabRowIndex(null);
+          }}
+          className="cursor-pointer text-gray-400"
+        />
+
         {/* Drawer Content */}
-        <div className="p-6 mt-8">
-          <Text className="text-[21px] text-roboto">
-            <span className="text-[#29292980]">Ad Group </span>
-            <span className="text-[#292929] font-bold">{tabRowData?.name}</span>
+        <div className="p-6 mt-6">
+          <Text className="text-lg font-roboto">
+            <span className="text-gray-500">Ad Group </span>
+            <span className="text-gray-800 font-bold">
+              {tabRowData?.name || ""}
+            </span>
           </Text>
-          <div className="mt-5">
-            <DrawerTable rows={tabRowData} />
+
+          {/* Tabs Section */}
+          <div className="mt-5 border rounded-lg border-gray-300">
+            <Flex className="text-sm border-b">
+              {tabs.map((tab, index) => (
+                <Tab
+                  key={tab.label}
+                  label={tab.label}
+                  isActive={tab.isActive}
+                  showBorder={activeTab === tab.label}
+                  onClick={() => setActiveTabByIndex(index)}
+                />
+              ))}
+              <TabPlus
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                dropdownItems={dropdownItems}
+                handleDropdownClick={handleDropdownClick}
+              />
+            </Flex>
+
+            <div className="p-4 w-full min-h-[200px] flex justify-center items-center text-sm">
+              <Text align="center" weight="medium">
+                {activeTab}
+                <br />
+                Coming Soon...
+              </Text>
+            </div>
           </div>
         </div>
+
         {/* Drag Handle */}
         <div
-          onMouseDown={handleMouseDown}
+          onMouseDown={() => setIsDragging(true)}
           style={{
             position: "absolute",
             top: 0,
@@ -87,7 +161,7 @@ const ResizableDrawer: React.FC<ResizableDrawerProps> = ({
             width: "4px",
             height: "100%",
             cursor: "ew-resize",
-            background: "rgba(0,0,0,0.1)",
+            backgroundColor: "rgba(0, 0, 0, 0.1)",
           }}
         />
       </div>
