@@ -113,7 +113,7 @@ const ResizableDrawer: React.FC<ResizableDrawerProps> = ({
         />
 
         {/* Drawer Content */}
-        <div className="p-6 mt-6">
+        <div className="p-6 mt-5">
           <Text className="text-lg font-roboto">
             <span className="text-gray-500">Ad Group </span>
             <span className="text-gray-800 font-bold">
@@ -143,7 +143,7 @@ const ResizableDrawer: React.FC<ResizableDrawerProps> = ({
 
             <div className="p-4 w-full min-h-[200px] flex justify-center items-center text-sm">
               <Text align="center" weight="medium">
-                {activeTab}
+                <span style={{ fontWeight: "600" }}> {activeTab}</span>
                 <br />
                 Coming Soon...
               </Text>
@@ -153,6 +153,7 @@ const ResizableDrawer: React.FC<ResizableDrawerProps> = ({
 
         {/* Drag Handle */}
         <div
+          data-testid="resize-handle"
           onMouseDown={() => setIsDragging(true)}
           style={{
             position: "absolute",
