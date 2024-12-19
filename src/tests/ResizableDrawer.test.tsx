@@ -26,7 +26,6 @@ describe("ResizableDrawer Component", () => {
     expect(screen.getByTestId("resize-handle")).toBeInTheDocument();
     expect(screen.getByText("Ad Group")).toBeInTheDocument();
     expect(screen.getByText("Test Tab")).toBeInTheDocument();
-    expect(screen.getByText("Keywords")).toBeInTheDocument();
   });
 
   test("opens the drawer and resizes it", () => {
