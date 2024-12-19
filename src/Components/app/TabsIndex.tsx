@@ -77,14 +77,20 @@ const TabsIndex: FC = () => {
       ROAS: -0.8,
     },
   ];
+  // Handle active tab change
+  const setActiveTabByIndex = (index: number) => {
+    setTabs((prevTabs) =>
+      prevTabs.map((tab, i) => ({ ...tab, isActive: i === index }))
+    );
+    setActiveTab(tabs[index].label);
+  };
 
-  // Handle Dropdown Click
   const handleDropdownClick = (item: string) => {
     setTabs((prevTabs) => [
       ...prevTabs.map((tab) => ({ ...tab, isActive: false })),
       { label: item, isActive: true },
     ]);
-    setDropdownItems((prevItems) => prevItems.filter((i) => i !== item));
+    setDropdownItems((items) => items.filter((i) => i !== item));
     setActiveTab(item);
   };
 
@@ -95,14 +101,6 @@ const TabsIndex: FC = () => {
     }
   }, [tabRowIndex]);
 
-  // Handle Tab Click
-  const handleTabClick = (index: number, label: string) => {
-    setTabs((prevTabs) =>
-      prevTabs.map((tab, i) => ({ ...tab, isActive: i === index }))
-    );
-    setActiveTab(label);
-  };
-
   return (
     <Box className="border border-[#9797974E] rounded-[6px] mt-4">
       {/* Tabs Header */}
@@ -112,13 +110,13 @@ const TabsIndex: FC = () => {
             key={tab.label}
             label={tab.label}
             isActive={tab.isActive}
-            showBorder={tab.isActive}
-            onClick={() => handleTabClick(index, tab.label)}
+            showBorder={activeTab === tab.label}
+            onClick={() => setActiveTabByIndex(index)}
           />
         ))}
         <TabPlus
-          setActiveTab={setActiveTab}
           activeTab={activeTab}
+          setActiveTab={setActiveTab}
           dropdownItems={dropdownItems}
           handleDropdownClick={handleDropdownClick}
         />
